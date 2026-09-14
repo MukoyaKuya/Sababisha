@@ -1,0 +1,4 @@
+<div id="work-results" class="portfolio-grid" aria-live="polite">
+  {% for project in projects %}<a class="project-card" href="{{ project.get_absolute_url }}"><div class="project-image"><img src="{{ project.cover.url }}" alt="{{ project.cover_alt }}" loading="lazy"><span class="image-arrow">↗</span></div><div class="project-caption"><h2>{{ project.title }}</h2><span>{{ project.get_service_display }} / {{ project.year }}</span></div><p>{{ project.summary }}</p></a>
+  {% empty %}<div class="empty-portfolio"><span class="blue" aria-hidden="true">✳</span><h2>Watch this space.</h2><p>{% if selected %}No projects in this discipline just yet.{% else %}Our portfolio is taking shape. Selected projects will appear here soon.{% endif %}</p><a class="text-link" href="{% url 'contact' %}">TELL US ABOUT YOUR PROJECT ↗</a></div>{% endfor %}
+</div>

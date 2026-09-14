@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}{{ project.title }} — Sababisha Africa{% endblock %}
+{% block description %}{{ project.summary }}{% endblock %}
+{% block content %}
+<article class="standard-page case-study">
+  <a class="text-link" href="{% url 'work' %}">← ALL PROJECTS</a>
+  <header class="page-heading"><span class="eyebrow">{{ project.get_service_display }} / {{ project.year }}</span><h1>{{ project.title }}</h1><p>{{ project.summary }}</p>{% if project.client %}<p class="eyebrow">CLIENT / {{ project.client }}</p>{% endif %}</header>
+  <img class="case-cover" src="{{ project.cover.url }}" alt="{{ project.cover_alt }}">
+  <div class="case-copy"><section><span class="eyebrow">01 / THE CHALLENGE</span><h2>Where we started.</h2>{{ project.challenge|linebreaks }}</section><section><span class="eyebrow">02 / THE APPROACH</span><h2>How we got there.</h2>{{ project.approach|linebreaks }}</section>{% if project.outcome %}<section><span class="eyebrow">03 / THE OUTCOME</span><h2>What happened next.</h2>{{ project.outcome|linebreaks }}</section>{% endif %}</div>
+  <div class="gallery">{% for image in project.images.all %}<img src="{{ image.image.url }}" alt="{{ image.alt }}" loading="lazy">{% endfor %}</div>
+  <div class="case-actions">{% if project.website %}<a class="text-link" href="{{ project.website }}" target="_blank" rel="noopener noreferrer">VISIT THE PROJECT ↗</a>{% endif %}<a class="button" href="{% url 'contact' %}">LET'S BUILD YOUR NEXT CHAPTER ↗</a></div>
+</article>
+{% endblock %}

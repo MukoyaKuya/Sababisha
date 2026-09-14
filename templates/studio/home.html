@@ -1,0 +1,522 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="section-wrapper">
+  <div class="section-height" data-horizontal>
+    <div class="sticky-wrapper">
+      <div class="sticky-element">
+        <div class="track">
+          <div class="track-flex">
+
+            <!-- 1. WELCOME SECTION (EXACT MATCH TO BIG DIRTY AGENCY) -->
+            <section class="welcome-section" id="welcome">
+              <div class="welcome-content">
+                <div class="header-wrapper">
+                  <div class="brand-logo">
+                    {% if site_settings.hero_logo %}
+                      <img src="{{ site_settings.hero_logo.url }}" alt="{{ site_settings.site_name|default:'Sababisha Africa' }}" class="brand-logo-img" width="140" height="119" decoding="async" style="width: 140px; max-width: 140px; height: auto; display: block; object-fit: contain;">
+                    {% else %}
+                      <img src="{% static 'img/sababisha-zebra-logo.webp' %}" alt="Sababisha Africa" class="brand-logo-img" width="140" height="119" decoding="async" style="width: 140px; max-width: 140px; height: auto; display: block; object-fit: contain;">
+                    {% endif %}
+                  </div>
+                  <h1 class="h1">{{ site_settings.welcome_heading|default:"INTENTIONAL<br>BRANDING<br>FOR<br>PASSIONATE<br>BUSINESSES."|linebreaksbr }}</h1>
+                </div>
+              </div>
+              
+              <!-- Floating Two-Tone CTA Box overlapping right border -->
+              <div class="welcome-cta">
+                <div class="welcome-cta-top">
+                  <div class="text-block-12">{{ site_settings.welcome_cta_top_text|default:"I help elevate existing brands and create new ones from scratch. I do it because I believe your brand should work as hard as you do." }}</div>
+                </div>
+                <div class="welcome-cta-bottom">
+                  <a href="{{ site_settings.welcome_cta_url|default:'#lets-vibe' }}" class="black-cta">
+                    <div class="text-block-13">
+                      <span class="cta-top-line">{{ site_settings.welcome_cta_top_line|default:'Start your brand journey.' }}<br></span>
+                      {{ site_settings.welcome_cta_bottom_line|default:'Schedule a vibe check.' }}
+                    </div>
+                    <svg class="button-heart large" viewBox="0 0 24 24" fill="none" stroke="{{ active_palette.arrow|default:active_palette.primary }}" stroke-width="4.5" stroke-linecap="square">
+                      <path d="M4 9l8 8 8-8"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </section>
+
+            <!-- 2. COVER PHOTO SECTION -->
+            <section class="cover-photo-section">
+              <div class="face-image-wrapper">
+                {% if site_settings.founder_photo %}
+                  <img src="{{ site_settings.founder_photo.url }}" alt="Sababisha Africa Studio Director" class="bill-image" width="{{ site_settings.founder_photo.width }}" height="{{ site_settings.founder_photo.height }}" loading="eager" decoding="async" fetchpriority="high">
+                {% else %}
+                  <picture>
+                    <source media="(max-width: 991px)" srcset="{% static 'img/studio-founder-480.webp' %}">
+                    <img src="{% static 'img/studio-founder.webp' %}" alt="Sababisha Africa Studio Director" class="bill-image" width="896" height="1200" loading="eager" decoding="async" fetchpriority="high">
+                  </picture>
+                {% endif %}
+              </div>
+            </section>
+
+            <!-- 3. WHAT WE DO SECTION -->
+            <section class="what-we-do-section" id="what-we-do">
+              <div class="border-wrapper">
+                <div class="border">
+                  <div class="border-corner border-corner-tl"></div>
+                  <div class="border-corner border-corner-tr"></div>
+                  <div class="border-corner border-corner-bl"></div>
+                  <div class="border-corner border-corner-br"></div>
+                </div>
+              </div>
+              <h2 class="card-title">{{ site_settings.what_we_do_title|default:"What I do" }}</h2>
+              <div class="what-we-do-content">
+                <h3 class="heading">{{ site_settings.what_we_do_heading|default:"SABABISHA.AFRICA IS A<br>BRANDING AGENCY."|linebreaksbr }}</h3>
+                <p>{{ site_settings.what_we_do_body|linebreaksbr }}</p>
+                <a href="{{ site_settings.what_we_do_cta_url|default:'#how-we-do-it' }}" class="button">
+                  <div>{{ site_settings.what_we_do_cta_label|default:"See how we uncover your story." }}</div>
+                  <svg class="button-heart" viewBox="0 0 24 24" fill="none" stroke="{{ active_palette.arrow|default:active_palette.primary }}" stroke-width="4" stroke-linecap="square">
+                    <path d="M4 9l8 8 8-8"/>
+                  </svg>
+                </a>
+              </div>
+            </section>
+
+            <!-- 4. HOW WE DO IT SECTION -->
+            <section class="how-we-do-it-section" id="how-we-do-it">
+              <div class="border-wrapper no-right">
+                <div class="border border-black">
+                  <div class="border-corner border-corner-tl border-black background-tan"></div>
+                  <div class="border-corner border-corner-bl border-black background-tan"></div>
+                </div>
+              </div>
+              <h2 class="card-title text-black background-tan">{{ site_settings.how_we_do_it_title|default:"How I do it" }}</h2>
+              <div class="how-we-do-it-content">
+                <h3 class="heading">{{ site_settings.how_step1_heading|default:"First things First" }}</h3>
+                <p>{{ site_settings.how_step1_body|linebreaksbr }}</p>
+              </div>
+              <div class="how-we-do-it-content-2">
+                <h3 class="heading">{{ site_settings.how_step2_heading|default:"Second things second" }}</h3>
+                <p class="paragraph">{{ site_settings.how_step2_body|linebreaksbr }}</p>
+                <div class="div-block-2">
+                  <a href="{{ site_settings.how_cta_url|default:'#our-process' }}" class="button">
+                    <div>{{ site_settings.how_cta_label|default:"Learn about our process" }}</div>
+                    <svg class="button-heart" viewBox="0 0 24 24" fill="none" stroke="{{ active_palette.arrow|default:active_palette.primary }}" stroke-width="4" stroke-linecap="square">
+                      <path d="M4 9l8 8 8-8"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+              <div class="monkey-wrapper-right">
+                {% if site_settings.bridging_warrior %}
+                  <img src="{{ site_settings.bridging_warrior.url }}" alt="Warrior illustration" class="image-3 warrior-image" style="width: auto; max-height: 480px; object-fit: contain;">
+                {% else %}
+                  <div class="warrior-scroll-animation">
+                    <canvas
+                      class="image-3 warrior-image hero-warrior-canvas"
+                      width="640"
+                      height="360"
+                      data-sprite="{% static 'img/warrior-idle-sprite.webp' %}"
+                      role="img"
+                      aria-label="Animated African warrior illustration"></canvas>
+                  </div>
+                {% endif %}
+              </div>
+            </section>
+
+            <!-- 5. OUR PROCESS TIMELINE SECTION -->
+            <section class="our-process-section" id="our-process">
+              <div class="border-wrapper no-left">
+                <div class="border border-orange">
+                  <div class="border-corner border-corner-tr border-orange background-black"></div>
+                  <div class="border-corner border-corner-br border-orange background-black"></div>
+                </div>
+              </div>
+              <h2 class="card-title background-black sticky">{{ site_settings.process_section_title|default:"My process" }}</h2>
+              <div class="timeline-wrapper">
+                <div class="timeline">
+                  <!-- Animated mascot track -->
+                  <div class="rabbit-wrapper warrior-timeline-wrapper">
+                    <div class="rabbit-animations">
+                      <div class="rabbit-sitting-wrapper">
+                        {% if site_settings.standing_warrior %}
+                          <img src="{{ site_settings.standing_warrior.url }}" alt="Standing African Warrior" class="rabbit warrior-timeline-standing" loading="lazy" decoding="async">
+                        {% else %}
+                          <img src="{% static 'img/warrior-standing-clean.png' %}" alt="Standing African Warrior" class="rabbit warrior-timeline-standing" width="261" height="269" loading="lazy" decoding="async">
+                        {% endif %}
+                      </div>
+                      <div class="rabbit-running-wrapper">
+                        <canvas
+                          class="warrior-run-canvas"
+                          width="261"
+                          height="269"
+                          data-sprite="{% static 'img/warrior-run-sprite.webp' %}"
+                          role="img"
+                          aria-label="Running African Warrior"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="yellow-line"></div>
+                  <div class="processes-list">
+                    {% if process_steps %}
+                      {% for step in process_steps %}
+                      <div class="process-single">
+                        <div class="process-number">{{ step.step_number }}</div>
+                        <h3 class="heading text-tan">{{ step.title }}</h3>
+                        <div class="white-text-on-black">{{ step.description }}</div>
+                      </div>
+                      {% endfor %}
+                    {% else %}
+                      <div class="process-single">
+                        <div class="process-number">1</div>
+                        <h3 class="heading text-tan">vibe check</h3>
+                        <div class="white-text-on-black">A free 15-minute call to discuss your business and explore how we can elevate your brand.</div>
+                      </div>
+                      <div class="process-single">
+                        <div class="process-number">2</div>
+                        <h3 class="heading text-tan">sababisha.review</h3>
+                        <div class="white-text-on-black">A deep-dive interview to uncover your brand's potential and pinpoint opportunities.</div>
+                      </div>
+                      <div class="process-single">
+                        <div class="process-number">3</div>
+                        <h3 class="heading text-tan">Strategy Development</h3>
+                        <div class="white-text-on-black">We craft a unique brand strategy document based on our findings.</div>
+                      </div>
+                      <div class="process-single">
+                        <div class="process-number">4</div>
+                        <h3 class="heading text-tan">Design &amp; Implementation</h3>
+                        <div class="white-text-on-black">We bring your brand to life across all touchpoints, ensuring consistency and impact.</div>
+                      </div>
+                      <div class="process-single">
+                        <div class="process-number">5</div>
+                        <h3 class="heading text-tan">Launch &amp; Support</h3>
+                        <div class="white-text-on-black">We're with you as your new brand goes live, making sure everything lands exactly right.</div>
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="div-block process-callout">
+                    <div class="timeline-footer">
+                      <div class="process-footer-button-wrapper">
+                        <a href="{{ site_settings.process_cta_url|default:'#lets-vibe' }}" class="button background-tan text-black">
+                          <div>{{ site_settings.process_cta_label|default:"Book a sababisha.vibecheck" }}</div>
+                          <svg class="button-heart" viewBox="0 0 24 24" fill="none" stroke="#1c1c1c" stroke-width="4" stroke-linecap="square">
+                            <path d="M4 9l8 8 8-8"/>
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 6. PRICING SECTION -->
+            <section class="pricing-section" id="pricing">
+              <div class="border-wrapper">
+                <div class="border">
+                  <div class="border-corner border-corner-tl"></div>
+                  <div class="border-corner border-corner-tr"></div>
+                  <div class="border-corner border-corner-bl"></div>
+                  <div class="border-corner border-corner-br"></div>
+                </div>
+              </div>
+              <h2 class="card-title">{{ site_settings.pricing_section_title|default:"Pricing" }}</h2>
+              <div class="pricing-content">
+                <p class="pricing-intro">{{ site_settings.pricing_intro|default:"Choose a service to see what it includes. Every engagement is shaped around your goals, so pricing is quoted to fit the work." }}</p>
+                <div class="service-grid" aria-label="Services and custom pricing">
+                  {% for service in services %}
+                  <button class="service-card" type="button" data-service="{{ service.key }}" data-title="{{ service.name }}" data-description="{{ service.modal_description|default:service.description }}" aria-haspopup="dialog">
+                    {% if service.icon_image %}
+                      <img src="{{ service.icon_image.url }}" alt="" class="service-icon" loading="lazy" decoding="async" style="object-fit: contain;">
+                    {% elif service.icon_svg %}
+                      {{ service.icon_svg|safe }}
+                    {% elif service.key == 'web-development' or service.key == 'web' %}
+                      <svg class="service-icon" viewBox="0 0 64 64" aria-hidden="true"><rect x="9" y="11" width="46" height="42" rx="7"/><path d="M9 22h46M25 34l-7 7 7 7m14-14 7 7-7 7"/></svg>
+                    {% elif service.key == 'branding' %}
+                      <svg class="service-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 7c3 14 11 22 25 25-14 3-22 11-25 25-3-14-11-22-25-25 14-3 22-11 25-25Z"/><circle cx="32" cy="32" r="5"/></svg>
+                    {% elif service.key == 'graphic-design' or service.key == 'design' %}
+                      <svg class="service-icon" viewBox="0 0 64 64" aria-hidden="true"><circle cx="20" cy="42" r="8"/><circle cx="44" cy="20" r="8"/><path d="m26 36 12-10M15 15h18v18H15z"/></svg>
+                    {% elif service.key == 'videography' or service.key == 'film' %}
+                      <svg class="service-icon" viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="16" width="35" height="32" rx="5"/><path d="m43 26 13-7v26l-13-7zM8 25h35"/><path d="m20 33 9 6-9 6z"/></svg>
+                    {% elif service.key == 'photography' or service.key == 'photo' %}
+                      <svg class="service-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 21h12l4-6h12l4 6h12v29H10z"/><circle cx="32" cy="36" r="10"/><circle cx="32" cy="36" r="4"/></svg>
+                    {% elif service.key == 'digital-storytelling' or service.key == 'community' %}
+                      <svg class="service-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 15c9-4 17-2 22 5v30c-5-7-13-9-22-5zM54 15c-9-4-17-2-22 5v30c5-7 13-9 22-5z"/><path d="M42 10v11m-5-5h10"/></svg>
+                    {% elif service.key == 'service-portals' %}
+                      <svg class="service-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M13 54V13h28v41zM41 27h10m-5-5 5 5-5 5"/><path d="M24 26h7m-7 10h7m-7 10h7"/></svg>
+                    {% elif service.key == 'service-systems' or service.key == 'tools' %}
+                      <svg class="service-icon" viewBox="0 0 64 64" aria-hidden="true"><rect x="7" y="25" width="12" height="12" rx="2"/><rect x="45" y="8" width="12" height="12" rx="2"/><rect x="45" y="44" width="12" height="12" rx="2"/><path d="M19 31h14m0 0 12-17m-12 17 12 19"/></svg>
+                    {% elif service.key == 'communication-strategy' %}
+                      <svg class="service-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 13h34v25H25L14 48v-10h-4z"/><path d="M28 26h26v19H39l-8 7v-7h-3z"/><path d="M19 25h16m6 12h8"/></svg>
+                    {% else %}
+                      <svg class="service-icon" viewBox="0 0 64 64" aria-hidden="true"><rect x="9" y="11" width="46" height="42" rx="7"/><path d="M9 22h46M25 34l-7 7 7 7m14-14 7 7-7 7"/></svg>
+                    {% endif %}
+                    <span>{{ service.name }}</span>
+                  </button>
+                  {% endfor %}
+                </div>
+                <div class="pricing-footer">
+                  <div class="pricing-footer-text">{{ site_settings.pricing_footer_text|default:"Need a tailored scope?" }}</div>
+                  <a href="{{ site_settings.pricing_cta_url|default:'#lets-vibe' }}" class="button">
+                    <div>{{ site_settings.pricing_cta_label|default:"Book your sababisha.vibecheck now" }}</div>
+                    <svg class="button-heart" viewBox="0 0 24 24" fill="none" stroke="{{ active_palette.arrow|default:active_palette.primary }}" stroke-width="4" stroke-linecap="square">
+                      <path d="M4 9l8 8 8-8"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+              <dialog class="service-modal" id="service-modal" aria-labelledby="service-modal-title" aria-describedby="service-modal-description">
+                <div class="service-modal-inner">
+                  <button class="service-modal-close" type="button" aria-label="Close service details">×</button>
+                  <p class="service-modal-eyebrow">Custom quote</p>
+                  <h3 id="service-modal-title"></h3>
+                  <p class="service-modal-price">Pricing <strong>Custom quote</strong></p>
+                  <p id="service-modal-description"></p>
+                  <a href="#lets-vibe" class="button service-modal-cta"><span>Start a conversation</span></a>
+                </div>
+              </dialog>
+            </section>
+
+            <!-- 7. RECENT PROJECTS SECTION -->
+            <section class="recent-projects-section" id="recent-work">
+              <div class="border-wrapper">
+                <div class="border">
+                  <div class="border-corner border-corner-tl background-yellow"></div>
+                  <div class="border-corner border-corner-tr background-yellow"></div>
+                  <div class="border-corner border-corner-bl background-yellow"></div>
+                  <div class="border-corner border-corner-br background-yellow"></div>
+                </div>
+              </div>
+              <h2 class="card-title text-black background-yellow">Recent Work</h2>
+              <div class="recent-projects-list">
+                {% if projects %}
+                  {% for project in projects %}
+                  <a href="{{ project.get_absolute_url }}" class="project-link">
+                    <div class="project-link-image-wrap">
+                      <img src="{{ project.cover.url }}" alt="{{ project.cover_alt|default:project.title }}" class="project-link-cover-image" loading="lazy" decoding="async">
+                    </div>
+                    <div class="project-link-content">
+                      <h3 class="h4">{{ project.title }}</h3>
+                      <div class="project-link-description">
+                        <div>View Project</div>
+                        <svg class="button-heart" viewBox="0 0 24 24" fill="none" stroke="#ebbf58" stroke-width="4" stroke-linecap="square">
+                          <path d="M4 9l8 8 8-8"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </a>
+                  {% endfor %}
+                {% else %}
+                  <a href="{% url 'work' %}" class="project-link">
+                    <div class="project-link-image-wrap default-bg-1">
+                      <div class="sample-project-art">✳</div>
+                    </div>
+                    <div class="project-link-content">
+                      <h3 class="h4">Nairobi Design Collective</h3>
+                      <div class="project-link-description">
+                        <div>View Project</div>
+                        <svg class="button-heart" viewBox="0 0 24 24" fill="none" stroke="#ebbf58" stroke-width="4" stroke-linecap="square">
+                          <path d="M4 9l8 8 8-8"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="{% url 'work' %}" class="project-link">
+                    <div class="project-link-image-wrap default-bg-2">
+                      <div class="sample-project-art">✦</div>
+                    </div>
+                    <div class="project-link-content">
+                      <h3 class="h4">Kente Digital Studio</h3>
+                      <div class="project-link-description">
+                        <div>View Project</div>
+                        <svg class="button-heart" viewBox="0 0 24 24" fill="none" stroke="#ebbf58" stroke-width="4" stroke-linecap="square">
+                          <path d="M4 9l8 8 8-8"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </a>
+                {% endif %}
+              </div>
+            </section>
+
+            <!-- 8. HEY, I'M SABABISHA SECTION -->
+            <section class="hey-im-bill-section" id="about">
+              <div class="hey-im-bill-content">
+                <div class="hey-im-bill-black-box">
+                  <h3 class="heading text-orange bill-title">{{ site_settings.about_heading|default:"Hey, we're Sababisha!" }}</h3>
+                  <p class="text-tan white-text-on-black">{{ site_settings.about_body|linebreaksbr }}</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- 9. WHO'S THIS FOR SECTION -->
+            <section class="whos-this-for-section" id="whos-this-for">
+              <div class="border-wrapper">
+                <div class="border border-orange">
+                  <div class="border-corner border-corner-tl border-orange background-tan"></div>
+                  <div class="border-corner border-corner-tr border-orange background-tan"></div>
+                  <div class="border-corner border-corner-bl border-orange background-tan"></div>
+                  <div class="border-corner border-corner-br border-orange background-tan"></div>
+                </div>
+              </div>
+              <h2 class="card-title text-black background-tan">{{ site_settings.whos_this_for_title|default:"Who’s this for?" }}</h2>
+              <div class="what-we-do-content">
+                <h3 class="heading text-orange">{{ site_settings.whos_this_for_heading|default:"Are you a good fit?" }}</h3>
+                <p>{{ site_settings.whos_this_for_body|linebreaksbr }}</p>
+                <a href="{{ site_settings.whos_this_for_cta_url|default:'#lets-vibe' }}" class="button">
+                  <div>
+                    <span class="cta-top-line">{{ site_settings.whos_this_for_cta_top_line|default:'Start your brand journey.' }}<br></span>
+                    {{ site_settings.whos_this_for_cta_bottom_line|default:'Schedule a vibe check.' }}
+                  </div>
+                  <svg class="button-heart large" viewBox="0 0 24 24" fill="none" stroke="{{ active_palette.arrow|default:active_palette.primary }}" stroke-width="4.5" stroke-linecap="square">
+                    <path d="M4 9l8 8 8-8"/>
+                  </svg>
+                </a>
+              </div>
+              {% if site_settings.winged_lion %}
+                <img src="{{ site_settings.winged_lion.url }}" alt="Winged lion mascot" class="lion" loading="lazy" decoding="async">
+              {% else %}
+                <img src="{% static 'img/winged-lion.png' %}" alt="Winged lion mascot" class="lion" width="800" height="834" loading="lazy" decoding="async">
+              {% endif %}
+            </section>
+
+            <!-- 10. CAPABILITIES SECTION -->
+            <section class="our-capabilities-section" id="our-capabilities">
+              <div class="border-wrapper">
+                <div class="border border-tan">
+                  <div class="border-corner border-corner-tl"></div>
+                  <div class="border-corner border-corner-tr"></div>
+                  <div class="border-corner border-corner-bl"></div>
+                  <div class="border-corner border-corner-br"></div>
+                </div>
+              </div>
+              <h2 class="card-title">{{ site_settings.capabilities_section_title|default:"My capabilities" }}</h2>
+              <div class="timeline-wrapper">
+                <div class="timeline">
+                  <div class="yellow-line"></div>
+                  <div class="processes-list">
+                    {% if capabilities %}
+                      {% for cap in capabilities %}
+                      <div class="process-single">
+                        <div class="process-number white-circle">{{ cap.number }}</div>
+                        <h3 class="heading text-black">{{ cap.title }}</h3>
+                        <div class="text-block-7">{{ cap.description }}</div>
+                      </div>
+                      {% endfor %}
+                    {% else %}
+                      <div class="process-single">
+                        <div class="process-number white-circle">1</div>
+                        <h3 class="heading text-black">Brand Strategy</h3>
+                        <div class="text-block-7">We believe in creating a solid brand foundation. Together, we'll develop a plan that aligns your brand with your business goals and sets you apart in your market.</div>
+                      </div>
+                      <div class="process-single">
+                        <div class="process-number white-circle">2</div>
+                        <h3 class="heading text-black">Visual Identity</h3>
+                        <div class="text-block-6">A strong visual identity can speak volumes. We're here to help you craft or refine the visual elements that make your brand uniquely you.</div>
+                      </div>
+                      <div class="process-single">
+                        <div class="process-number white-circle">3</div>
+                        <h3 class="heading text-black">Messaging</h3>
+                        <div class="text-block-9">Your message matters. We'll work with you to find the right words that connect with your audience and showcase what makes your business special.</div>
+                      </div>
+                      <div class="process-single">
+                        <div class="process-number white-circle">4</div>
+                        <h3 class="heading text-black">Web Design &amp; Dev</h3>
+                        <div class="text-block-10">In today's digital world, your website is often the first impression. We're passionate about creating online spaces that represent your brand effectively.</div>
+                      </div>
+                      <div class="process-single">
+                        <div class="process-number white-circle">5</div>
+                        <h3 class="heading text-black">Photography &amp; Film</h3>
+                        <div class="text-block-11">Sometimes, a picture really is worth a thousand words. We're excited about the power of visual storytelling to bring your brand to life.</div>
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="div-block">
+                    <div class="timeline-footer2">
+                      <div class="text-block-8">{{ site_settings.capabilities_footer_text|default:"Want to explore your options?" }}</div>
+                      <div class="process-footer-button-wrapper">
+                        <a href="{{ site_settings.capabilities_cta_url|default:'#lets-vibe' }}" class="button background-tan text-black">
+                          <div>{{ site_settings.capabilities_cta_label|default:"Book a sababisha.vibecheck" }}</div>
+                          <svg class="button-heart" viewBox="0 0 24 24" fill="none" stroke="#1c1c1c" stroke-width="4" stroke-linecap="square">
+                            <path d="M4 9l8 8 8-8"/>
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 11. LET'S VIBE CONTACT SECTION -->
+            <section class="lets-vibe-section" id="lets-vibe">
+              <div class="border-wrapper">
+                <div class="border border-orange">
+                  <div class="border-corner border-corner-tl border-orange background-black"></div>
+                  <div class="border-corner border-corner-tr border-orange background-black"></div>
+                  <div class="border-corner border-corner-bl border-orange background-black"></div>
+                  <div class="border-corner border-corner-br border-orange background-black"></div>
+                </div>
+              </div>
+              {% if site_settings.panther_mascot %}
+                <img src="{{ site_settings.panther_mascot.url }}" alt="Panther with wings" class="panther" loading="lazy" decoding="async">
+              {% else %}
+                <img src="{% static 'img/cougar.png' %}" alt="Panther with wings" class="panther" width="1000" height="841" loading="lazy" decoding="async">
+              {% endif %}
+              <h2 class="card-title background-black let-s-vibe-card-title">{{ site_settings.contact_section_title|default:"Let’s vibe" }}</h2>
+              <div class="lets-vibe-content">
+                <h3 class="heading text-yellow">{{ site_settings.contact_heading|default:"Drop us a line" }}</h3>
+                <div class="text-tan" style="margin-bottom: 24px;">{{ site_settings.contact_subtitle|default:"Ready to create something fresh? Let's chat." }}</div>
+                
+                <div id="inquiry-form-wrapper">
+                  {% include 'studio/partials/inquiry.html' %}
+                </div>
+
+                <div class="contaact-form-footer">
+                  {{ site_settings.contact_footer_note|default:"More of an email person? Hit us up at:" }} 
+                  <a href="mailto:{{ site_settings.contact_email|default:'hello@sababisha.africa' }}?subject=Let's%20vibe" class="link-2">{{ site_settings.contact_email|default:'hello@sababisha.africa' }}</a>
+                </div>
+              </div>
+            </section>
+
+            <!-- 12. FOOTER SECTION -->
+            <section class="footer">
+              {% if site_settings.footer_mascot %}
+                <img src="{{ site_settings.footer_mascot.url }}" alt="Sababisha Africa Mascot" class="footer-image" loading="lazy" decoding="async">
+              {% else %}
+                <img src="{% static 'img/clean-up-your-brand.png' %}" alt="Sababisha Africa Mascot" class="footer-image" width="937" height="1592" loading="lazy" decoding="async">
+              {% endif %}
+              <div class="footer-tagline-box">
+                <div class="footer-tagline">{{ site_settings.footer_tagline|default:"MAKE THINGS HAPPEN." }}</div>
+                <div class="footer-sub">{{ site_settings.footer_subtagline|default:"SABABISHA AFRICA — INTENTIONAL BRANDING" }}</div>
+              </div>
+              <div class="socials">
+                <div class="social-text">{{ site_settings.footer_social_text|default:"Where we hang out online" }}</div>
+                <div class="social-icons">
+                  {% if site_settings.linkedin_url %}
+                  <a href="{{ site_settings.linkedin_url }}" target="_blank" rel="noopener" class="social-icon-link-block" aria-label="LinkedIn">
+                    <span class="social-badge">IN</span>
+                  </a>
+                  {% endif %}
+                  {% if site_settings.instagram_url %}
+                  <a href="{{ site_settings.instagram_url }}" target="_blank" rel="noopener" class="social-icon-link-block" aria-label="Instagram">
+                    <span class="social-badge">IG</span>
+                  </a>
+                  {% endif %}
+                  {% if site_settings.x_url %}
+                  <a href="{{ site_settings.x_url }}" target="_blank" rel="noopener" class="social-icon-link-block" aria-label="Twitter/X">
+                    <span class="social-badge">X</span>
+                  </a>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="collaboration">
+                <div class="text-block-2">{{ site_settings.footer_copyright|default:"Sababisha Africa Studio · Nairobi, Kenya" }} © {% now 'Y' %}</div>
+              </div>
+            </section>
+
+          </div><!-- /.track-flex -->
+        </div><!-- /.track -->
+      </div><!-- /.sticky-element -->
+    </div><!-- /.sticky-wrapper -->
+  </div><!-- /.section-height -->
+</div><!-- /.section-wrapper -->
+{% endblock %}

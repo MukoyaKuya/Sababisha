@@ -1,0 +1,127 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="{{ active_palette.primary }}">
+  <meta name="description" content="{% block description %}{{ site_settings.site_description|default:'Sababisha Africa — Intentional branding, creative strategy, and digital experiences for passionate businesses.' }}{% endblock %}">
+  <title>{% block title %}{{ site_settings.site_name|default:'Sababisha Africa' }} | Creative Branding & Digital Agency{% endblock %}</title>
+  <link rel="icon" href="{% static 'img/heart.svg' %}" type="image/svg+xml">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="{% static 'fonts/TAYRoadRunner.otf' %}" as="font" type="font/otf" crossorigin>
+  
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+  <style>
+    :root {
+      --orange: {{ active_palette.primary }};
+      --black: {{ active_palette.ink }};
+      --tan: {{ active_palette.surface }};
+      --yellow: {{ active_palette.accent }};
+      --arrow: {{ active_palette.arrow|default:active_palette.primary }};
+      --nav-hover-color: #25f46a;
+    }
+    [data-theme="kenya"] .heart-icon,
+    [data-theme="kenya"] .button:not(.background-tan) .button-heart,
+    [data-theme="kenya"] .black-cta .button-heart {
+      stroke: #ffffff !important;
+    }
+  </style>
+  <script defer src="{% static 'vendor/htmx/htmx.min.js' %}"></script>
+  <script defer src="{% static 'js/site.js' %}"></script>
+  <script defer src="{% static 'vendor/alpine/cdn.min.js' %}"></script>
+</head>
+<body class="body" data-theme="{{ active_palette_key|default:'embers' }}" data-border-style="{{ site_settings.decorative_border|default:'classic' }}" x-data="studioShell" @keydown.escape.window="closeMenu()" :class="{ 'menu-open': open }">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Fixed Left Sidebar Rail (Matching Big Dirty Agency) -->
+  <aside class="sidebar-wrapper" aria-label="Main navigation">
+    <div class="sidebar">
+      <div class="sidebar-buttons-wrapper">
+        <button type="button" class="heart-button" @click="toggleMenu()" :aria-expanded="open" aria-label="Toggle navigation menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="{{ active_palette.arrow|default:active_palette.primary }}" stroke-width="4.5" stroke-linecap="square" class="heart-icon">
+            <path d="M4 9l8 8 8-8"/>
+          </svg>
+        </button>
+        <a href="#lets-vibe" class="sidebar-link">Schedule your Vibe Check</a>
+        <button type="button" class="menu-button-bottom" x-ref="toggle" @click="toggleMenu()" :aria-expanded="open" aria-controls="site-menu" aria-label="Menu trigger">
+          <span class="burger-bar"></span>
+          <span class="burger-bar"></span>
+          <span class="burger-bar"></span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Backdrop overlay when drawer is open -->
+  <div class="nav-backdrop" @click="closeMenu()"></div>
+
+  <!-- Side Drawer Navigation Panel (Matching Big Dirty Agency) -->
+  <nav id="site-menu" class="nav-menu-2" :class="{ 'is-open': open }" role="dialog" aria-modal="true" aria-label="Site Navigation" @keydown.tab="trapFocus($event)">
+    <div class="nav-list">
+      <div class="nav-link-wrapper">
+        <a href="{% url 'home' %}#welcome" class="nav-link" @click="closeMenu()">
+          <span class="nav-index">01<span class="nav-index-arrow"> →</span></span>
+          <span class="nav-text">SABABISHA.AFRICA</span>
+          <svg class="nav-decoration" viewBox="0 0 500 90" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 14,8 C 90,3 180,6 270,3 C 360,1 440,5 488,4 C 496,5 499,22 497,45 C 495,68 498,85 486,87 C 420,86 310,88 230,86 C 140,88 60,85 10,86 C 3,85 1,68 4,45 C 6,22 3,8 14,8 Z" fill="var(--nav-hover-color, #25f46a)"/>
+          </svg>
+        </a>
+      </div>
+      <div class="nav-link-wrapper">
+        <a href="{% url 'home' %}#our-process" class="nav-link" @click="closeMenu()">
+          <span class="nav-index">02<span class="nav-index-arrow"> →</span></span>
+          <span class="nav-text">PROCESS</span>
+          <svg class="nav-decoration" viewBox="0 0 500 90" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 14,8 C 90,3 180,6 270,3 C 360,1 440,5 488,4 C 496,5 499,22 497,45 C 495,68 498,85 486,87 C 420,86 310,88 230,86 C 140,88 60,85 10,86 C 3,85 1,68 4,45 C 6,22 3,8 14,8 Z" fill="var(--nav-hover-color, #25f46a)"/>
+          </svg>
+        </a>
+      </div>
+      <div class="nav-link-wrapper">
+        <a href="{% url 'home' %}#pricing" class="nav-link" @click="closeMenu()">
+          <span class="nav-index">03<span class="nav-index-arrow"> →</span></span>
+          <span class="nav-text">PRICING</span>
+          <svg class="nav-decoration" viewBox="0 0 500 90" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 14,8 C 90,3 180,6 270,3 C 360,1 440,5 488,4 C 496,5 499,22 497,45 C 495,68 498,85 486,87 C 420,86 310,88 230,86 C 140,88 60,85 10,86 C 3,85 1,68 4,45 C 6,22 3,8 14,8 Z" fill="var(--nav-hover-color, #25f46a)"/>
+          </svg>
+        </a>
+      </div>
+      <div class="nav-link-wrapper">
+        <a href="{% url 'home' %}#our-capabilities" class="nav-link" @click="closeMenu()">
+          <span class="nav-index">04<span class="nav-index-arrow"> →</span></span>
+          <span class="nav-text">CAPABILITIES</span>
+          <svg class="nav-decoration" viewBox="0 0 500 90" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 14,8 C 90,3 180,6 270,3 C 360,1 440,5 488,4 C 496,5 499,22 497,45 C 495,68 498,85 486,87 C 420,86 310,88 230,86 C 140,88 60,85 10,86 C 3,85 1,68 4,45 C 6,22 3,8 14,8 Z" fill="var(--nav-hover-color, #25f46a)"/>
+          </svg>
+        </a>
+      </div>
+      <div class="nav-link-wrapper">
+        <a href="{% url 'home' %}#lets-vibe" class="nav-link" @click="closeMenu()">
+          <span class="nav-index">05<span class="nav-index-arrow"> →</span></span>
+          <span class="nav-text">CONTACT</span>
+          <svg class="nav-decoration" viewBox="0 0 500 90" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 14,8 C 90,3 180,6 270,3 C 360,1 440,5 488,4 C 496,5 499,22 497,45 C 495,68 498,85 486,87 C 420,86 310,88 230,86 C 140,88 60,85 10,86 C 3,85 1,68 4,45 C 6,22 3,8 14,8 Z" fill="var(--nav-hover-color, #25f46a)"/>
+          </svg>
+        </a>
+      </div>
+      <div class="nav-footer">
+        {% if site_settings.nav_logo %}
+          <img src="{{ site_settings.nav_logo.url }}" alt="{{ site_settings.site_name|default:'Sababisha Africa Logo' }}" class="nav-footer-img" width="130" height="110" loading="lazy" decoding="async" style="width: 130px; max-width: 130px; height: auto; display: block; object-fit: contain;">
+        {% else %}
+          <img src="{% static 'img/sababisha-zebra-logo-light.png' %}" alt="Sababisha Africa Logo" class="nav-footer-img" width="130" height="110" loading="lazy" decoding="async" style="width: 130px; max-width: 130px; height: auto; display: block; object-fit: contain;">
+        {% endif %}
+        <div class="copyright-text">© {% now 'Y' %} {{ site_settings.site_name|default:'sababisha.africa'|lower }}</div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main" tabindex="-1">
+    {% block content %}{% endblock %}</main>
+  {% block footer %}{% endblock %}
+
+</body>
+</html>

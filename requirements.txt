@@ -1,0 +1,5 @@
+Django>=6.0.8,<6.1
+django-unfold>=0.102,<0.103
+psycopg[binary]>=3.2,<4
+Pillow>=12.2,<13
+python-dotenv>=1.1,<2

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Our work — Sababisha Africa{% endblock %}
+{% block content %}
+<div class="standard-page">
+  <a class="text-link" href="{% url 'home' %}">← BACK TO THE STUDIO</a>
+  <header class="page-heading"><span class="eyebrow">THE SABABISHA PORTFOLIO</span><h1>Ideas made <span class="blue">real.</span></h1><p>Design, technology, and storytelling. Explore what we've been making.</p></header>
+  <form class="filters" action="{% url 'work' %}" method="get" hx-get="{% url 'work' %}" hx-target="#work-results" hx-push-url="true" hx-trigger="change, submit"><label for="service-filter" class="eyebrow">EXPLORE BY DISCIPLINE</label><select id="service-filter" name="service"><option value="">All disciplines</option>{% for service in services %}<option value="{{ service.key }}" {% if selected == service.key %}selected{% endif %}>{{ service.name }}</option>{% endfor %}</select><button class="text-link" type="submit">FILTER ↗</button></form>
+  {% include 'studio/partials/project_grid.html' %}
+</div>
+{% endblock %}

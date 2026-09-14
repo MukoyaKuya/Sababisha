@@ -1,0 +1,59 @@
+<div id="inquiry-form" aria-live="polite">
+  {% if sent %}
+  <div class="success-message w-form-done" role="status" tabindex="-1">
+    <div class="text-block-15">And so it begins. Thank you! Your inquiry has been received! We'll be in touch shortly.</div>
+  </div>
+  {% else %}
+  <form method="post" action="{% url 'contact' %}" hx-post="{% url 'contact' %}" hx-target="#inquiry-form" hx-swap="outerHTML" hx-disabled-elt="find button[type='submit']" hx-indicator="#sending" class="form">
+    {% csrf_token %}{{ form.website }}
+    {% if form.errors %}
+      <div class="error-message w-form-fail" role="alert">
+        <div class="text-block-14">Oops! Something went wrong. Please check your fields.</div>
+      </div>
+    {% endif %}
+    
+    <div class="form-top-row">
+      <div class="form-group">
+        <label for="{{ form.name.id_for_label }}" class="sr-only">Name*</label>
+        <input type="text" name="name" id="{{ form.name.id_for_label }}" class="form-field w-input" placeholder="Name*" value="{{ form.name.value|default:'' }}" required>
+        {% if form.name.errors %}<div class="field-error">{{ form.name.errors }}</div>{% endif %}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.email.id_for_label }}" class="sr-only">Email*</label>
+        <input type="email" name="email" id="{{ form.email.id_for_label }}" class="form-field w-input" placeholder="Email*" value="{{ form.email.value|default:'' }}" required>
+        {% if form.email.errors %}<div class="field-error">{{ form.email.errors }}</div>{% endif %}
+      </div>
+    </div>
+
+    <div class="form-top-row" style="margin-top: 15px;">
+      <div class="form-group">
+        <label for="{{ form.organization.id_for_label }}" class="sr-only">Company / Project</label>
+        <input type="text" name="organization" id="{{ form.organization.id_for_label }}" class="form-field w-input" placeholder="Company / Practice" value="{{ form.organization.value|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label for="{{ form.service.id_for_label }}" class="sr-only">Service</label>
+        <select name="service" id="{{ form.service.id_for_label }}" class="form-field w-input select-field">
+          <option value="" disabled {% if not form.service.value %}selected{% endif %}>What are you looking for?</option>
+          {% for val, label in form.fields.service.choices %}
+            {% if val %}
+              <option value="{{ val }}" {% if form.service.value == val %}selected{% endif %}>{{ label }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-top: 15px;">
+      <label for="{{ form.message.id_for_label }}" class="sr-only">Message*</label>
+      <textarea name="message" id="{{ form.message.id_for_label }}" class="form-field form-textarea w-input" placeholder="Tell us about your brand, goals, or idea…*" rows="3" required>{{ form.message.value|default:'' }}</textarea>
+      {% if form.message.errors %}<div class="field-error">{{ form.message.errors }}</div>{% endif %}
+    </div>
+
+    <div class="form-submit-wrap">
+      <button type="submit" class="submit-button w-button">Send it.</button>
+      <div id="sending" class="htmx-indicator">Sending your note…</div>
+    </div>
+    <p class="request-error" hidden>We couldn't send your inquiry. Please try again.</p>
+  </form>
+  {% endif %}
+</div>
