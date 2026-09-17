@@ -1,14 +1,15 @@
 from django.db import models
 from django.urls import reverse
 
-from .content import DECORATIVE_BORDER_CHOICES, SERVICE_CHOICES, THEME_PALETTES, THEME_PALETTE_CHOICES
+from .content import DECORATIVE_BORDER_CHOICES, THEME_PALETTES, THEME_PALETTE_CHOICES
+from .validators import validate_cta_url
 
 
 class Project(models.Model):
     title = models.CharField(max_length=160)
     slug = models.SlugField(unique=True)
     client = models.CharField(max_length=160, blank=True)
-    service = models.CharField(max_length=20, choices=SERVICE_CHOICES)
+    service = models.CharField(max_length=60)
     summary = models.CharField(max_length=260)
     cover = models.ImageField(upload_to="projects/covers/")
     cover_alt = models.CharField(max_length=200, help_text="Describe the image for screen readers.")
@@ -45,7 +46,7 @@ class Inquiry(models.Model):
     name = models.CharField(max_length=120)
     email = models.EmailField()
     organization = models.CharField(max_length=160, blank=True)
-    service = models.CharField(max_length=20, choices=SERVICE_CHOICES)
+    service = models.CharField(max_length=60)
     message = models.TextField(max_length=5000)
     created_at = models.DateTimeField(auto_now_add=True)
     handled = models.BooleanField(default=False)
@@ -56,6 +57,41 @@ class Inquiry(models.Model):
 
     def __str__(self):
         return f"{self.name} — {self.get_service_display()}"
+
+
+class AvailabilityDay(models.Model):
+    """A calendar date the studio has opened for a vibe-check appointment."""
+
+    date = models.DateField(unique=True)
+    available = models.BooleanField(default=True)
+    note = models.CharField(max_length=160, blank=True, help_text="Optional internal note, e.g. morning only.")
+
+    class Meta:
+        ordering = ["date"]
+        verbose_name = "available appointment day"
+        verbose_name_plural = "available appointment days"
+
+    def __str__(self):
+        return self.date.strftime("%a, %d %b %Y")
+
+
+class Appointment(models.Model):
+    """A public vibe-check request against an admin-opened calendar day."""
+
+    availability_day = models.OneToOneField(AvailabilityDay, on_delete=models.PROTECT, related_name="appointment")
+    name = models.CharField(max_length=120)
+    email = models.EmailField()
+    organization = models.CharField(max_length=160, blank=True)
+    service = models.CharField(max_length=60, blank=True)
+    message = models.TextField(max_length=2000, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    confirmed = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["availability_day__date"]
+
+    def __str__(self):
+        return f"{self.availability_day.date:%d %b} — {self.name}"
 
 
 class SiteSettings(models.Model):
@@ -99,14 +135,14 @@ class SiteSettings(models.Model):
     welcome_cta_top_text = models.TextField(blank=True, default="I help elevate existing brands and create new ones from scratch. I do it because I believe your brand should work as hard as you do.")
     welcome_cta_top_line = models.CharField(max_length=120, blank=True, default="Start your brand journey.")
     welcome_cta_bottom_line = models.CharField(max_length=120, blank=True, default="Schedule a vibe check.")
-    welcome_cta_url = models.CharField(max_length=200, blank=True, default="#lets-vibe")
+    welcome_cta_url = models.CharField(max_length=200, blank=True, default="#lets-vibe", validators=[validate_cta_url])
 
     # Section 3: What We Do
     what_we_do_title = models.CharField(max_length=80, blank=True, default="What I do")
     what_we_do_heading = models.CharField(max_length=200, blank=True, default="SABABISHA.AFRICA IS A\nBRANDING AGENCY.")
     what_we_do_body = models.TextField(blank=True, help_text="Paragraphs of copy for What We Do.")
     what_we_do_cta_label = models.CharField(max_length=120, blank=True, default="See how we uncover your story.")
-    what_we_do_cta_url = models.CharField(max_length=200, blank=True, default="#how-we-do-it")
+    what_we_do_cta_url = models.CharField(max_length=200, blank=True, default="#how-we-do-it", validators=[validate_cta_url])
 
     # Section 4: How We Do It
     how_we_do_it_title = models.CharField(max_length=80, blank=True, default="How I do it")
@@ -115,19 +151,19 @@ class SiteSettings(models.Model):
     how_step2_heading = models.CharField(max_length=120, blank=True, default="Second things second")
     how_step2_body = models.TextField(blank=True)
     how_cta_label = models.CharField(max_length=120, blank=True, default="Learn about our process")
-    how_cta_url = models.CharField(max_length=200, blank=True, default="#our-process")
+    how_cta_url = models.CharField(max_length=200, blank=True, default="#our-process", validators=[validate_cta_url])
 
     # Section 5: Our Process
     process_section_title = models.CharField(max_length=80, blank=True, default="My process")
     process_cta_label = models.CharField(max_length=120, blank=True, default="Book a sababisha.vibecheck")
-    process_cta_url = models.CharField(max_length=200, blank=True, default="#lets-vibe")
+    process_cta_url = models.CharField(max_length=200, blank=True, default="#lets-vibe", validators=[validate_cta_url])
 
     # Section 6: Pricing
     pricing_section_title = models.CharField(max_length=80, blank=True, default="Pricing")
     pricing_intro = models.TextField(blank=True, default="Choose a service to see what it includes. Every engagement is shaped around your goals, so pricing is quoted to fit the work.")
     pricing_footer_text = models.CharField(max_length=160, blank=True, default="Need a tailored scope?")
     pricing_cta_label = models.CharField(max_length=120, blank=True, default="Book your sababisha.vibecheck now")
-    pricing_cta_url = models.CharField(max_length=200, blank=True, default="#lets-vibe")
+    pricing_cta_url = models.CharField(max_length=200, blank=True, default="#lets-vibe", validators=[validate_cta_url])
 
     # Section 8: About
     about_heading = models.CharField(max_length=120, blank=True, default="Hey, we're Sababisha!")
@@ -139,13 +175,13 @@ class SiteSettings(models.Model):
     whos_this_for_body = models.TextField(blank=True)
     whos_this_for_cta_top_line = models.CharField(max_length=120, blank=True, default="Start your brand journey.")
     whos_this_for_cta_bottom_line = models.CharField(max_length=120, blank=True, default="Schedule a vibe check.")
-    whos_this_for_cta_url = models.CharField(max_length=200, blank=True, default="#lets-vibe")
+    whos_this_for_cta_url = models.CharField(max_length=200, blank=True, default="#lets-vibe", validators=[validate_cta_url])
 
     # Section 10: Capabilities
     capabilities_section_title = models.CharField(max_length=80, blank=True, default="My capabilities")
     capabilities_footer_text = models.CharField(max_length=160, blank=True, default="Want to explore your options?")
     capabilities_cta_label = models.CharField(max_length=120, blank=True, default="Book a sababisha.vibecheck")
-    capabilities_cta_url = models.CharField(max_length=200, blank=True, default="#lets-vibe")
+    capabilities_cta_url = models.CharField(max_length=200, blank=True, default="#lets-vibe", validators=[validate_cta_url])
 
     # Section 11: Contact / Let's Vibe
     contact_section_title = models.CharField(max_length=80, blank=True, default="Let’s vibe")
@@ -222,7 +258,6 @@ class ServiceOffering(models.Model):
     modal_description = models.TextField(blank=True, help_text="Text shown inside the service detail popup modal.")
     tags = models.CharField(max_length=240, blank=True, help_text="Discipline tags, e.g. Websites / E-commerce / Web apps")
     icon_image = models.ImageField(upload_to="services/", blank=True, help_text="Optional custom icon image for the service card.")
-    icon_svg = models.TextField(blank=True, help_text="Custom inline SVG for the service card icon. Leave blank for default icon.")
     sort_order = models.PositiveSmallIntegerField(default=0)
     published = models.BooleanField(default=True)
 

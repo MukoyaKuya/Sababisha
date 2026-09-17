@@ -223,11 +223,9 @@
                 <p class="pricing-intro">{{ site_settings.pricing_intro|default:"Choose a service to see what it includes. Every engagement is shaped around your goals, so pricing is quoted to fit the work." }}</p>
                 <div class="service-grid" aria-label="Services and custom pricing">
                   {% for service in services %}
-                  <button class="service-card" type="button" data-service="{{ service.key }}" data-title="{{ service.name }}" data-description="{{ service.modal_description|default:service.description }}" aria-haspopup="dialog">
+                  <button class="service-card" type="button" data-service="{{ service.key }}" data-title="{{ service.name }}" data-description="{{ service.modal_description|default:service.description }}" data-tags="{{ service.tags }}" aria-haspopup="dialog">
                     {% if service.icon_image %}
                       <img src="{{ service.icon_image.url }}" alt="" class="service-icon" loading="lazy" decoding="async" style="object-fit: contain;">
-                    {% elif service.icon_svg %}
-                      {{ service.icon_svg|safe }}
                     {% elif service.key == 'web-development' or service.key == 'web' %}
                       <svg class="service-icon" viewBox="0 0 64 64" aria-hidden="true"><rect x="9" y="11" width="46" height="42" rx="7"/><path d="M9 22h46M25 34l-7 7 7 7m14-14 7 7-7 7"/></svg>
                     {% elif service.key == 'branding' %}
@@ -265,12 +263,24 @@
               </div>
               <dialog class="service-modal" id="service-modal" aria-labelledby="service-modal-title" aria-describedby="service-modal-description">
                 <div class="service-modal-inner">
-                  <button class="service-modal-close" type="button" aria-label="Close service details">×</button>
-                  <p class="service-modal-eyebrow">Custom quote</p>
+                  <div class="service-modal-accent" aria-hidden="true"></div>
+                  <button class="service-modal-close" type="button" aria-label="Close service details">
+                    <span aria-hidden="true">×</span><span class="service-modal-close-label">Close</span>
+                  </button>
+                  <div class="service-modal-header">
+                    <p class="service-modal-eyebrow">Service / custom scope</p>
+                    <span class="service-modal-number" aria-hidden="true">01</span>
+                  </div>
                   <h3 id="service-modal-title"></h3>
-                  <p class="service-modal-price">Pricing <strong>Custom quote</strong></p>
-                  <p id="service-modal-description"></p>
-                  <a href="#lets-vibe" class="button service-modal-cta"><span>Start a conversation</span></a>
+                  <p id="service-modal-description" class="service-modal-description"></p>
+                  <div class="service-modal-scope">
+                    <p class="service-modal-scope-label">A focused scope can include</p>
+                    <ul id="service-modal-tags" class="service-modal-tags"></ul>
+                  </div>
+                  <div class="service-modal-footer">
+                    <div class="service-modal-note"><strong>Pricing is tailored.</strong><span>We’ll shape the right scope after a quick vibe check.</span></div>
+                    <a href="#lets-vibe" class="button service-modal-cta"><span>Plan your project</span><span aria-hidden="true">↘</span></a>
+                  </div>
                 </div>
               </dialog>
             </section>
@@ -350,18 +360,18 @@
             <!-- 9. WHO'S THIS FOR SECTION -->
             <section class="whos-this-for-section" id="whos-this-for">
               <div class="border-wrapper">
-                <div class="border border-orange">
-                  <div class="border-corner border-corner-tl border-orange background-tan"></div>
-                  <div class="border-corner border-corner-tr border-orange background-tan"></div>
-                  <div class="border-corner border-corner-bl border-orange background-tan"></div>
-                  <div class="border-corner border-corner-br border-orange background-tan"></div>
+                <div class="border border-tan">
+                  <div class="border-corner border-corner-tl border-tan background-orange"></div>
+                  <div class="border-corner border-corner-tr border-tan background-orange"></div>
+                  <div class="border-corner border-corner-bl border-tan background-orange"></div>
+                  <div class="border-corner border-corner-br border-tan background-orange"></div>
                 </div>
               </div>
               <h2 class="card-title text-black background-tan">{{ site_settings.whos_this_for_title|default:"Who’s this for?" }}</h2>
               <div class="what-we-do-content">
                 <h3 class="heading text-orange">{{ site_settings.whos_this_for_heading|default:"Are you a good fit?" }}</h3>
                 <p>{{ site_settings.whos_this_for_body|linebreaksbr }}</p>
-                <a href="{{ site_settings.whos_this_for_cta_url|default:'#lets-vibe' }}" class="button">
+                <a href="{{ site_settings.whos_this_for_cta_url|default:'#lets-vibe' }}" class="button whos-cta">
                   <div>
                     <span class="cta-top-line">{{ site_settings.whos_this_for_cta_top_line|default:'Start your brand journey.' }}<br></span>
                     {{ site_settings.whos_this_for_cta_bottom_line|default:'Schedule a vibe check.' }}
@@ -381,11 +391,11 @@
             <!-- 10. CAPABILITIES SECTION -->
             <section class="our-capabilities-section" id="our-capabilities">
               <div class="border-wrapper">
-                <div class="border border-tan">
-                  <div class="border-corner border-corner-tl"></div>
-                  <div class="border-corner border-corner-tr"></div>
-                  <div class="border-corner border-corner-bl"></div>
-                  <div class="border-corner border-corner-br"></div>
+                <div class="border border-orange">
+                  <div class="border-corner border-corner-tl border-orange background-tan"></div>
+                  <div class="border-corner border-corner-tr border-orange background-tan"></div>
+                  <div class="border-corner border-corner-bl border-orange background-tan"></div>
+                  <div class="border-corner border-corner-br border-orange background-tan"></div>
                 </div>
               </div>
               <h2 class="card-title">{{ site_settings.capabilities_section_title|default:"My capabilities" }}</h2>
@@ -463,27 +473,21 @@
               {% endif %}
               <h2 class="card-title background-black let-s-vibe-card-title">{{ site_settings.contact_section_title|default:"Let’s vibe" }}</h2>
               <div class="lets-vibe-content">
-                <h3 class="heading text-yellow">{{ site_settings.contact_heading|default:"Drop us a line" }}</h3>
-                <div class="text-tan" style="margin-bottom: 24px;">{{ site_settings.contact_subtitle|default:"Ready to create something fresh? Let's chat." }}</div>
-                
-                <div id="inquiry-form-wrapper">
-                  {% include 'studio/partials/inquiry.html' %}
-                </div>
-
-                <div class="contaact-form-footer">
-                  {{ site_settings.contact_footer_note|default:"More of an email person? Hit us up at:" }} 
-                  <a href="mailto:{{ site_settings.contact_email|default:'hello@sababisha.africa' }}?subject=Let's%20vibe" class="link-2">{{ site_settings.contact_email|default:'hello@sababisha.africa' }}</a>
-                </div>
+                <h3 class="heading text-yellow">Pick a day to make things happen.</h3>
+                <div class="text-tan vibe-intro">Choose a highlighted date, share a few details, and we’ll confirm your appointment by email.</div>
+                {% include 'studio/partials/appointment_calendar.html' %}
               </div>
             </section>
 
             <!-- 12. FOOTER SECTION -->
             <section class="footer">
-              {% if site_settings.footer_mascot %}
-                <img src="{{ site_settings.footer_mascot.url }}" alt="Sababisha Africa Mascot" class="footer-image" loading="lazy" decoding="async">
-              {% else %}
-                <img src="{% static 'img/clean-up-your-brand.png' %}" alt="Sababisha Africa Mascot" class="footer-image" width="937" height="1592" loading="lazy" decoding="async">
-              {% endif %}
+              <canvas
+                class="footer-warrior-canvas"
+                width="360"
+                height="360"
+                data-video="{% static 'img/warrior-kenya-flag.mp4' %}"
+                role="img"
+                aria-label="Animated African warrior holding the Kenyan flag"></canvas>
               <div class="footer-tagline-box">
                 <div class="footer-tagline">{{ site_settings.footer_tagline|default:"MAKE THINGS HAPPEN." }}</div>
                 <div class="footer-sub">{{ site_settings.footer_subtagline|default:"SABABISHA AFRICA — INTENTIONAL BRANDING" }}</div>

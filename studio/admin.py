@@ -1,8 +1,11 @@
+from django import forms
 from django.contrib import admin
 from django.utils.html import format_html, format_html_join
 from unfold.admin import ModelAdmin, StackedInline, TabularInline
 
 from .models import (
+    Appointment,
+    AvailabilityDay,
     Capability,
     Inquiry,
     ProcessStep,
@@ -24,8 +27,21 @@ class ProjectImageInline(TabularInline):
     extra = 1
 
 
+class ProjectAdminForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["service"] = forms.ChoiceField(
+            choices=[(service.key, service.name) for service in ServiceOffering.objects.all()],
+        )
+
+
 @admin.register(Project)
 class ProjectAdmin(ModelAdmin):
+    form = ProjectAdminForm
     list_display = ["title", "service", "year", "published", "featured", "sort_order"]
     list_filter = ["published", "featured", "service"]
     list_editable = ["published", "featured", "sort_order"]
@@ -41,6 +57,31 @@ class InquiryAdmin(ModelAdmin):
     list_editable = ["handled"]
     readonly_fields = ["name", "email", "organization", "service", "message", "created_at"]
     search_fields = ["name", "email", "organization"]
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(AvailabilityDay)
+class AvailabilityDayAdmin(ModelAdmin):
+    list_display = ["date", "available", "note"]
+    list_filter = ["available"]
+    list_editable = ["available"]
+    date_hierarchy = "date"
+    search_fields = ["note"]
+
+
+@admin.register(Appointment)
+class AppointmentAdmin(ModelAdmin):
+    list_display = ["appointment_date", "name", "email", "service", "confirmed", "created_at"]
+    list_filter = ["confirmed", "service"]
+    list_editable = ["confirmed"]
+    readonly_fields = ["availability_day", "name", "email", "organization", "service", "message", "created_at"]
+    search_fields = ["name", "email", "organization"]
+
+    @admin.display(ordering="availability_day__date", description="Appointment date")
+    def appointment_date(self, obj):
+        return obj.availability_day.date
 
     def has_add_permission(self, request):
         return False
@@ -76,7 +117,6 @@ class ServiceOfferingAdmin(ModelAdmin):
         "modal_description",
         "tags",
         "icon_image",
-        "icon_svg",
         "sort_order",
         "published",
     ]

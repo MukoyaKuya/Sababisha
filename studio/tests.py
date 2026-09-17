@@ -1,22 +1,23 @@
 from django.test import Client, TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 from .content import DECORATIVE_BORDER_CHOICES
-from .models import Capability, Inquiry, ProcessStep, Project, ServiceOffering, SiteSettings
+from .models import Appointment, AvailabilityDay, Capability, Inquiry, ProcessStep, Project, ServiceOffering, SiteSettings
 
 
 class PortfolioTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         data = {
-            "service": "web", "summary": "A community website.",
+            "service": "web-development", "summary": "A community website.",
             "cover": "projects/covers/example.jpg", "cover_alt": "Website home screen",
             "challenge": "Connect members.", "approach": "Build a directory.",
         }
         cls.live = Project.objects.create(title="Published project", slug="published", published=True, featured=True, **data)
         cls.draft = Project.objects.create(title="Private draft", slug="draft", featured=True, **data)
-        cls.other = Project.objects.create(title="Photography project", slug="photography", published=True, **{**data, "service": "photo"})
+        cls.other = Project.objects.create(title="Photography project", slug="photography", published=True, **{**data, "service": "photography"})
 
     def test_home_features_only_published_featured_projects(self):
         response = self.client.get(reverse("home"))
@@ -29,13 +30,13 @@ class PortfolioTests(TestCase):
         self.assertEqual(self.client.get(self.live.get_absolute_url()).status_code, 200)
 
     def test_filter_returns_only_requested_discipline(self):
-        response = self.client.get(reverse("work"), {"service": "photo"}, HTTP_HX_REQUEST="true")
+        response = self.client.get(reverse("work"), {"service": "photography"}, HTTP_HX_REQUEST="true")
         self.assertContains(response, self.other.title)
         self.assertNotContains(response, self.live.title)
         self.assertNotContains(response, "<!doctype html>")
 
     def test_filter_url_is_a_complete_page_without_htmx(self):
-        response = self.client.get(reverse("work"), {"service": "photo"})
+        response = self.client.get(reverse("work"), {"service": "photography"})
         self.assertContains(response, "<!doctype html>")
         self.assertContains(response, self.other.title)
 
@@ -49,10 +50,22 @@ class PortfolioTests(TestCase):
         self.assertContains(response, 'loading="lazy"')
         self.assertNotContains(response, "vendor/gsap/gsap.min.js")
 
+    def test_admin_managed_service_filters_projects(self):
+        service = ServiceOffering.objects.create(
+            key="brand-audit", name="Brand Audit", description="A focused audit.", published=True,
+        )
+        project = Project.objects.create(
+            title="Audit project", slug="audit-project", service=service.key,
+            summary="A brand audit.", cover="projects/covers/audit.jpg", cover_alt="Audit notes",
+            challenge="Find gaps.", approach="Review the brand.", published=True,
+        )
+        response = self.client.get(reverse("work"), {"service": service.key})
+        self.assertContains(response, project.title)
+
 
 class InquiryTests(TestCase):
     def setUp(self):
-        self.data = {"name": "Amina", "email": "amina@example.com", "organization": "Community", "service": "community", "message": "We would like a member platform."}
+        self.data = {"name": "Amina", "email": "amina@example.com", "organization": "Community", "service": "digital-storytelling", "message": "We would like a member platform."}
 
     def test_htmx_submission_is_saved(self):
         response = self.client.post(reverse("contact"), self.data, HTTP_HX_REQUEST="true")
@@ -78,6 +91,33 @@ class InquiryTests(TestCase):
         client = Client(enforce_csrf_checks=True)
         response = client.post(reverse("contact"), self.data, HTTP_HX_REQUEST="true")
         self.assertEqual(response.status_code, 403)
+
+    def test_rejects_services_not_published_in_the_admin(self):
+        response = self.client.post(reverse("contact"), {**self.data, "service": "not-a-service"}, HTTP_HX_REQUEST="true")
+        self.assertContains(response, "Select a valid choice")
+        self.assertEqual(Inquiry.objects.count(), 0)
+
+
+class AppointmentTests(TestCase):
+    def setUp(self):
+        self.day = AvailabilityDay.objects.create(date="2026-10-20")
+        self.data = {"selected_date": "2026-10-20", "name": "Amina", "email": "amina@example.com", "organization": "Community", "service": "", "message": "Looking forward to it."}
+
+    def test_available_admin_day_is_exposed_on_home(self):
+        response = self.client.get(reverse("home"))
+        self.assertContains(response, "2026\\u002D10\\u002D20")
+        self.assertNotContains(response, "BOOK A VIBE CHECK")
+
+    def test_booking_claims_an_open_day(self):
+        response = self.client.post(reverse("book_appointment"), self.data, HTTP_HX_REQUEST="true")
+        self.assertContains(response, "pencilled in")
+        self.assertEqual(Appointment.objects.get().availability_day, self.day)
+
+    def test_booked_or_closed_day_cannot_be_requested_again(self):
+        Appointment.objects.create(availability_day=self.day, name="First", email="first@example.com")
+        response = self.client.post(reverse("book_appointment"), self.data, HTTP_HX_REQUEST="true")
+        self.assertContains(response, "has just been requested")
+        self.assertEqual(Appointment.objects.count(), 1)
 
 
 class AdminTests(TestCase):
@@ -152,6 +192,18 @@ class AdminTests(TestCase):
         self.assertContains(response, "Custom What We Do")
         self.assertContains(response, "Custom About Heading")
 
+    def test_cta_urls_reject_script_schemes(self):
+        settings = SiteSettings.objects.get()
+        settings.welcome_cta_url = "javascript:alert(1)"
+        with self.assertRaises(ValidationError):
+            settings.full_clean()
+
+    def test_cta_urls_allow_anchors_paths_and_https(self):
+        settings = SiteSettings.objects.get()
+        for value in ("#lets-vibe", "/contact/", "https://example.com/brief"):
+            settings.welcome_cta_url = value
+            settings.full_clean()
+
     def test_dynamic_process_steps_rendered_on_home(self):
         ProcessStep.objects.all().delete()
         ProcessStep.objects.create(step_number="10", title="Custom Audit Step", description="Detailed audit test", sort_order=1)
@@ -187,6 +239,8 @@ class AdminTests(TestCase):
             "admin:studio_processstep_changelist",
             "admin:studio_capability_changelist",
             "admin:studio_serviceoffering_changelist",
+            "admin:studio_availabilityday_changelist",
+            "admin:studio_appointment_changelist",
         ]:
             response = self.client.get(reverse(url_name))
             self.assertEqual(response.status_code, 200)

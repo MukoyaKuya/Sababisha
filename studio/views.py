@@ -1,14 +1,29 @@
+import json
+
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_GET, require_http_methods
 
 from .content import SERVICES
-from .forms import InquiryForm
-from .models import Capability, ProcessStep, Project, ServiceOffering
+from .forms import AppointmentForm, InquiryForm
+from .models import AvailabilityDay, Capability, ProcessStep, Project, ServiceOffering
+
+
+def available_appointment_dates():
+    return list(
+        AvailabilityDay.objects.filter(date__gte=timezone.localdate(), available=True, appointment__isnull=True)
+        .values_list("date", flat=True)
+    )
+
+
+def appointment_context(form=None):
+    dates = available_appointment_dates()
+    return {"appointment_form": form or AppointmentForm(), "available_dates_json": json.dumps([day.isoformat() for day in dates])}
 
 
 def get_services():
-    offerings = ServiceOffering.objects.filter(published=True)
-    if offerings.exists():
+    offerings = list(ServiceOffering.objects.filter(published=True))
+    if offerings:
         return [
             {
                 "key": s.key,
@@ -20,7 +35,6 @@ def get_services():
                 "modal_description": s.modal_description or s.description,
                 "tags": s.tags,
                 "icon_image": s.icon_image,
-                "icon_svg": s.icon_svg,
             }
             for idx, s in enumerate(offerings)
         ]
@@ -36,6 +50,7 @@ def home(request):
         "capabilities": Capability.objects.all(),
         "projects": Project.objects.filter(published=True, featured=True)[:4],
         "form": InquiryForm(),
+        **appointment_context(),
     })
 
 
@@ -43,13 +58,14 @@ def home(request):
 def work(request):
     service = request.GET.get("service", "")
     projects = Project.objects.filter(published=True)
-    if service in dict((item["key"], item["name"]) for item in SERVICES):
+    services = get_services()
+    if service in {item["key"] for item in services}:
         projects = projects.filter(service=service)
     else:
         service = ""
     partial = request.headers.get("HX-Request") == "true" and request.headers.get("HX-History-Restore-Request") != "true"
     template = "studio/partials/project_grid.html" if partial else "studio/work.html"
-    return render(request, template, {"projects": projects, "services": SERVICES, "selected": service})
+    return render(request, template, {"projects": projects, "services": services, "selected": service})
 
 
 @require_GET
@@ -75,3 +91,12 @@ def contact(request):
 @require_GET
 def contact_success(request):
     return render(request, "studio/contact.html", {"sent": True})
+
+
+@require_http_methods(["POST"])
+def book_appointment(request):
+    form = AppointmentForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return render(request, "studio/partials/appointment_calendar.html", {"appointment_sent": True})
+    return render(request, "studio/partials/appointment_calendar.html", appointment_context(form))
